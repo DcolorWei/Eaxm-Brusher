@@ -41,7 +41,7 @@
         <var-button @click="(questionNum > 0) ? questionNum-- : false;">
             <var-icon name="chevron-left" />
         </var-button>
-         <var-button type="success" v-show="questionNum == questions.length - 1">
+         <var-button type="success" v-show="questionNum == questions.length - 1" @click="submit()">
             <b>提交答案</b>
         </var-button>
         <var-button @click="(questionNum < questions.length - 1) ? questionNum++ : false">
@@ -137,7 +137,7 @@ const questions = reactive([
                 context: '我记得这个科目是C++...'
             },
             {
-                optionId: 2,
+                optionId: 287,
                 context: '朋友是个坚韧不拔的纪录片'
             },
             {
@@ -185,6 +185,10 @@ function marked(optionId) {
     }
 }
 
+function submit(){
+    console.log(answersheet);
+}
+
 export default {
     //父组件绑定了该事件
     props:['chapterList'],
@@ -194,7 +198,8 @@ export default {
             questions,
             answersheet,
             questionNum,
-            marked
+            marked,
+            submit
         }
     }
 }

@@ -9,7 +9,7 @@
     </var-app-bar>
   </div>
   <div class="container">
-    <router-view :chapterList="chapterList" @startSheet="startSheet"></router-view>
+    <router-view :subjectList="subjectList" :chapterList="chapterList" @startSheet="startSheet"></router-view>
   </div>
   <div class="tabbar">
     <var-bottom-navigation v-model:active="active">
@@ -48,8 +48,6 @@ const subjectList = reactive([
   { subjectName: '气象学', subjectId: 'meteorology' },
   { subjectName: 'C语言', subjectId: 'c' },
 ]);
-
-
 
 const route = useRoute();
 const router = useRouter();
@@ -130,7 +128,6 @@ function startSheet(e) {
 #app {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   max-width: 600px;
 }
 
@@ -147,7 +144,7 @@ function startSheet(e) {
 .container {
   margin-top: 60px;
   width: 100%;
-  height: 600px;
+  min-height: 600px;
   max-width: 600px;
 
 }
