@@ -9,7 +9,7 @@
                         item.finishedNum
                 }}/{{ item.totalNum }}</div>
                 <div style="width: 20%;display: inline-block;">
-                    <var-button type="info" size="small" @click="startSheet()">刷题</var-button>
+                    <var-button type="info" size="small" @click="startSheet(item.chapterId)">刷题</var-button>
                 </div>
             </var-collapse-item>
         </var-collapse>
@@ -29,9 +29,9 @@ export default {
         }, { deep: true })
         return {
             activeChapter,
-            startSheet: function () {
+            startSheet: function (chapterId) {
                 activeChapter.value = null;
-                emit('startSheet', 1);
+                emit('startSheet', chapterId);
             }
         }
     }
