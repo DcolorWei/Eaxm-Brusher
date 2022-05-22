@@ -14,8 +14,7 @@
             <template #extra>
                 <div style="font-size: 14px;">{{ questions[questionNum].questionTitle }}</div>
                 <!-- wrong-write -->
-                <div style="display: flex;justify-content: center;"
-                    v-if="questions[questionNum].questionImage.length > 8">
+                <div style="display: flex;justify-content: center;" v-if="questions[questionNum].questionImage">
                     <img width="300" :src="questions[questionNum].questionImage">
                 </div>
             </template>
@@ -29,11 +28,11 @@
             }" @click="marked(item.optionId)">
             <var-cell v-if="questions[questionNum].questionType == 0"
                 :icon="(answersheet[questionNum].find(e => e == item.optionId)) ? 'radio-marked' : 'radio-blank'">
-                <div>{{item.context}}</div>
+                <div>{{ item.context }}</div>
             </var-cell>
             <var-cell v-if="questions[questionNum].questionType == 1"
                 :icon="(answersheet[questionNum].find(e => e == item.optionId)) ? 'checkbox-marked' : 'checkbox-blank-outline'">
-                <div>{{item.context}}</div>
+                <div>{{ item.context }}</div>
             </var-cell>
         </div>
     </div>
@@ -41,126 +40,26 @@
         <var-button @click="(questionNum > 0) ? questionNum-- : false;">
             <var-icon name="chevron-left" />
         </var-button>
-         <var-button type="success" v-show="questionNum == questions.length - 1" @click="submit()">
+        <var-button type="success" v-show="questionNum == questions.length - 1" @click="submit()">
             <b>提交答案</b>
         </var-button>
-        <var-button @click="(questionNum < questions.length - 1) ? questionNum++ : false">
+        <var-button @click="(questionNum < questions.length - 1) ? questionNum++ : false;">
             <var-icon name="chevron-right" />
         </var-button>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 import { ref, reactive } from 'vue';
+import { useRoute } from 'vue-router'
 //questionslist
-const questions = reactive([
-    {
-        questionId: 1,
-        questionTitle: '1关于C语言指针，下列说法错误的是______',
-        questionImage: 'setu',
-        questionType: 0,
-        questionOptions: [
-            {
-                optionId: 1,
-                context: '114514'
-            },
-            {
-                optionId: 2,
-                context: '114514'
-            },
-            {
-                optionId: 3,
-                context: '114514'
-            },
-            {
-                optionId: 4,
-                context: 'check'
-            },
-        ]
-    },
-    {
-        questionId: 1,
-        questionTitle: '2关针，下列说法错误的是______',
-        questionImage: 'setu',
-        questionType: 0,
-        questionOptions: [
-            {
-                optionId: 1,
-                context: '114514'
-            },
-            {
-                optionId: 2,
-                context: '114514'
-            },
-            {
-                optionId: 3,
-                context: '114514'
-            },
-            {
-                optionId: 4,
-                context: 'check'
-            },
-        ]
-    },
-    {
-        questionId: 1,
-        questionTitle: '3关于C语言指针，下列说法错误的是______',
-        questionImage: 'setu',
-        questionType: 1,
-        questionOptions: [
-            {
-                optionId: 1,
-                context: '114514'
-            },
-            {
-                optionId: 2,
-                context: '114514'
-            },
-            {
-                optionId: 3,
-                context: '114514'
-            },
-            {
-                optionId: 4,
-                context: 'check'
-            },
-        ]
-    },
-    {
-        questionId: 1,
-        questionTitle: '关于C语言指针，下列说法正确的是______',
-        questionImage: 'setu',
-        questionType: 1,
-        questionOptions: [
-            {
-                optionId: 1,
-                context: '我记得这个科目是C++...'
-            },
-            {
-                optionId: 287,
-                context: '朋友是个坚韧不拔的纪录片'
-            },
-            {
-                optionId: 3,
-                context: '1145141919810'
-            },
-            {
-                optionId: 4,
-                context: '我的评价是不如不写指针'
-            },
-            {
-                optionId: 5,
-                context: '钝角'
-            }
-        ]
-    }
-]);
+const questions = reactive([]);
+
+
 //answersheet
-const answersheet = reactive([
-])
-questions.forEach(() => {
-    answersheet.push([]);
-})
+const answersheet = reactive([])
+
 const questionNum = ref(0);
 
 function marked(optionId) {
@@ -185,15 +84,51 @@ function marked(optionId) {
     }
 }
 
-function submit(){
-    console.log(answersheet);
+function submit() {
+    const answersheetSplit = new Array();
+    questions.forEach((item, index) => {
+        answersheetSplit.push(
+            {
+                id: item.questionId,
+                answer: answersheet[index].join(',')
+            }
+        )
+    })
+    console.log(answersheetSplit)
+    axios({
+        url: 'https://www.wonend.cn:8888/api/question/commit',
+        method: 'POST',
+        data: answersheetSplit
+    }).then((res) => {
+        console.log(res.data)
+    })
 }
 
 export default {
     //父组件绑定了该事件
-    props:['chapterList'],
-    emits:['startSheet'],
-    setup() {
+    props: ['chapterList'],
+    emits: ['startSheet'],
+    async setup() {
+        const route = useRoute();
+        await axios({
+            url: 'https://www.wonend.cn:8888/api/question/get',
+            method: 'GET',
+            params: {
+                chapter: route.query.id,
+                num: 10,
+                type: 1,
+            }
+        }).then((res) => {
+            //清空问题列表
+            while (questions[0] !== undefined) {
+                questions.pop();
+            }
+            res.data.forEach((item) => {
+                questions.push(item);
+                answersheet.push([]);
+            })
+            console.log(questions)
+        })
         return {
             questions,
             answersheet,
