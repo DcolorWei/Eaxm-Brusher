@@ -9,7 +9,9 @@
     </var-app-bar>
   </div>
   <div class="container">
-    <router-view :subjectList="subjectList" :chapterList="chapterList" @startSheet="startSheet"></router-view>
+    <Suspense>
+      <router-view :chapterList="chapterList" @startSheet="startSheet"></router-view>
+    </Suspense>
   </div>
   <div class="tabbar">
     <var-bottom-navigation v-model:active="active">
@@ -37,6 +39,7 @@
 import { ref, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+axios.defaults.withCredentials = true
 
 const active = ref(0)
 
@@ -44,10 +47,7 @@ const subject = ref('');
 const subjectSelect = ref('');
 
 const subjectMeauShow = ref(false);
-const subjectList = reactive([
-  { subjectName: '气象学', subjectId: 'meteorology' },
-  { subjectName: 'C语言', subjectId: 'c' },
-]);
+const subjectList = reactive([]);
 
 const route = useRoute();
 const router = useRouter();
@@ -55,10 +55,9 @@ const router = useRouter();
 //get all subjects
 function getAllSubject() {
   axios({
-    url: 'http://www.wonend.cn:8888/api/subject/getAllSubject',
+    url: 'https://www.wonend.cn:8888/api/subject/getAllSubject',
     method: 'GET'
   }).then((res) => {
-    console.log(res);
     while (subjectList[0] !== undefined) {
       subjectList.pop();
     }
@@ -70,15 +69,12 @@ function getAllSubject() {
 }
 getAllSubject();
 
-const chapterList = reactive([
-  { chapterName: '大气概况', chapterId: 1, total: 32, finished: 20 },
-  { chapterName: '气温', chapterId: 2, total: 43, finished: 10 },
-])
+const chapterList = reactive([])
 
 //get all chapters
 function getAllChapters(subjectId) {
   axios({
-    url: 'http://www.wonend.cn:8888/api/subject/getAllChaptersById',
+    url: 'https://www.wonend.cn:8888/api/subject/getAllChaptersById',
     method: 'GET',
     params: {
       id: subjectId
@@ -89,8 +85,9 @@ function getAllChapters(subjectId) {
       chapterList.pop();
     }
     res.data.forEach(e => chapterList.push(e));
-  }).finally(()=>{
+  }).finally(() => {
     router.push('/practice');
+    active.value = 0;
   })
 }
 

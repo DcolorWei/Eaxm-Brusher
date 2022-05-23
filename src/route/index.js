@@ -1,7 +1,7 @@
 import * as VueRouter from 'vue-router'
 
 const routes = [
-    { path: '/', redirect: '/practice' },
+    { path: '/', redirect: '/user' },
     {
         path: '/practice',
         component: () => import('../view/Practice'),
