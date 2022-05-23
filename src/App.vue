@@ -129,7 +129,6 @@ function startSheet(e) {
 }
 
 .header {
-  height: 100px;
   width: 100%;
   position: fixed;
   top: 0;
