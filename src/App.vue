@@ -134,8 +134,8 @@ function startSheet(e) {
   position: fixed;
   top: 0;
   left: 0;
-  overflow: hidden;
   max-width: 600px;
+  z-index: 1;
 }
 
 .container {
@@ -143,7 +143,7 @@ function startSheet(e) {
   width: 100%;
   min-height: 600px;
   max-width: 600px;
-
+  z-index: 0;
 }
 
 .tabbar {
@@ -154,6 +154,7 @@ function startSheet(e) {
   border-top: 1px solid gray;
   overflow: hidden;
   max-width: 600px;
+  z-index: 1;
 
 }
 </style>
