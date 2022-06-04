@@ -94,6 +94,7 @@ function submit() {
             }
         )
     })
+    
     console.log(answersheetSplit)
     axios({
         url: 'https://www.wonend.cn:8888/api/question/commit',
